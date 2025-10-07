@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Heimrat Dorm FAQ</title>
+  <title>Heiglhofstr. 64/66 Dorm FAQ</title>
   <style>
     body { font-family: system-ui, sans-serif; margin: 30px auto; max-width: 800px; line-height: 1.6; }
     h1, h2 { color: #222; }
@@ -13,7 +13,7 @@
   </style>
 </head>
 <body>
-  <h1>Heimrat Dorm FAQ</h1>
+  <h1>Dorm Heiglhof.64/66 FAQ</h1>
   <input id="search" placeholder="Search all questions..." />
 
   <div id="faq-container"></div>
@@ -22,26 +22,34 @@
   <h2>Suggest a Question</h2>
   <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfjw4Cqqnu7wuLPSYZcjieyqE-dRdIOTKtVkbL3D7wRrEtmqA/viewform?usp=header" target="_blank">Submit a new question to the Heimrat Team</a></p>
 
-  <script>
-    const faqData = {
-      "Rooms & Facilities": [
-        {q:"Can I choose my roommate?", a:"Roommates are assigned by the housing office, but you can request preferences before allocation."},
-        {q:"Are pets allowed?", a:"Unfortunately, pets are not allowed in the dorms."}
-      ],
-      "Laundry": [
-        {q:"Where is the laundry room?", a:"Basement of Building B, open 24/7."},
-        {q:"How do I pay for washing?", a:"Machines use the dorm laundry card available at reception."}
-      ],
-      "Internet & IT": [
-        {q:"How do I connect to Wi-Fi?", a:"Select 'DormNet' and log in with your student credentials."},
-        {q:"Who do I contact for connection issues?", a:"Email the Heimrat IT team at it@heimrat-dorm.org."}
-      ],
-      "Rules & Support": [
-        {q:"What is the quiet hours policy?", a:"Quiet hours are 10 PM – 7 AM every day."},
-        {q:"Where can I report maintenance issues?", a:"Fill out the maintenance form at the reception or email support@heimrat-dorm.org."}
-      ]
-    };
+  <!-- Include PapaParse library to parse CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
+  <script>
+    // Paste your published Google Sheet CSV link here
+    const csvUrl = "https://docs.google.com/spreadsheets/d/1wrkcyZOdFzbPgoWdlZ0hCs93dopdVWC0W4dJWzXyW0Q/edit?usp=sharing"; // Example: https://docs.google.com/spreadsheets/d/e/2PACX-xxxx/pub?output=csv
+
+    let faqData = {}; // Object to store FAQs by section
+
+    // Fetch and parse CSV dynamically
+    Papa.parse(csvUrl, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        results.data.forEach(row => {
+          if(!row.Section) return; // skip empty rows
+          if(!faqData[row.Section]) faqData[row.Section] = [];
+          faqData[row.Section].push({q: row.Question, a: row.Answer});
+        });
+        renderFAQ(faqData); // initial render
+      },
+      error: function(err) {
+        console.error("Error loading CSV:", err);
+        document.getElementById('faq-container').innerHTML = "Failed to load FAQ data.";
+      }
+    });
+
+    // Render FAQs into collapsible sections
     function renderFAQ(data) {
       const container = document.getElementById('faq-container');
       container.innerHTML = '';
@@ -59,6 +67,7 @@
       }
     }
 
+    // Search functionality
     function searchFAQ(term) {
       term = term.toLowerCase();
       if (!term) { renderFAQ(faqData); return; }
@@ -71,8 +80,6 @@
     }
 
     document.getElementById('search').addEventListener('input', e => searchFAQ(e.target.value));
-    renderFAQ(faqData);
   </script>
 </body>
 </html>
-
