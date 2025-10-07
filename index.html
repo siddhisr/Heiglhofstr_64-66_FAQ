@@ -2,37 +2,77 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>FAQ</title>
+  <title>Heimrat Dorm FAQ</title>
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: 40px auto; line-height: 1.6; }
-    .q { background: #f8f8f8; border-radius: 8px; padding: 12px; margin: 10px 0; }
-    input { width: 100%; padding: 8px; margin: 12px 0; }
+    body { font-family: system-ui, sans-serif; margin: 30px auto; max-width: 800px; line-height: 1.6; }
+    h1, h2 { color: #222; }
+    .section { margin-top: 2em; }
+    .faq-item { background: #f8f8f8; margin: 8px 0; padding: 10px 14px; border-radius: 10px; }
+    .faq-item summary { cursor: pointer; font-weight: 600; }
+    input { width: 100%; padding: 8px; margin: 15px 0; }
   </style>
 </head>
 <body>
-  <h1>Frequently Asked Questions</h1>
-  <input id="search" placeholder="Search..." />
-  <div id="faq"></div>
-  <hr />
-  <h2>Submit a question</h2>
-  <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfjw4Cqqnu7wuLPSYZcjieyqE-dRdIOTKtVkbL3D7wRrEtmqA/viewform?usp=header" target="_blank">Click here to suggest a question</a></p>
+  <h1>Heimrat Dorm FAQ</h1>
+  <input id="search" placeholder="Search all questions..." />
+
+  <div id="faq-container"></div>
+
+  <hr>
+  <h2>Suggest a Question</h2>
+  <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfjw4Cqqnu7wuLPSYZcjieyqE-dRdIOTKtVkbL3D7wRrEtmqA/viewform?usp=header" target="_blank">Submit a new question to the Heimrat Team</a></p>
 
   <script>
-    const faq = [
-      {q: "How do I reset my password?", a: "Click 'Forgot password' on the login page."},
-      {q: "How can I contact support?", a: "Email support@example.com."}
-    ];
-
-    const faqDiv = document.getElementById('faq');
-    const render = (data) => {
-      faqDiv.innerHTML = data.map(x => `<div class="q"><b>${x.q}</b><br>${x.a}</div>`).join('');
+    const faqData = {
+      "Rooms & Facilities": [
+        {q:"Can I choose my roommate?", a:"Roommates are assigned by the housing office, but you can request preferences before allocation."},
+        {q:"Are pets allowed?", a:"Unfortunately, pets are not allowed in the dorms."}
+      ],
+      "Laundry": [
+        {q:"Where is the laundry room?", a:"Basement of Building B, open 24/7."},
+        {q:"How do I pay for washing?", a:"Machines use the dorm laundry card available at reception."}
+      ],
+      "Internet & IT": [
+        {q:"How do I connect to Wi-Fi?", a:"Select 'DormNet' and log in with your student credentials."},
+        {q:"Who do I contact for connection issues?", a:"Email the Heimrat IT team at it@heimrat-dorm.org."}
+      ],
+      "Rules & Support": [
+        {q:"What is the quiet hours policy?", a:"Quiet hours are 10 PM – 7 AM every day."},
+        {q:"Where can I report maintenance issues?", a:"Fill out the maintenance form at the reception or email support@heimrat-dorm.org."}
+      ]
     };
-    render(faq);
 
-    document.getElementById('search').addEventListener('input', e => {
-      const term = e.target.value.toLowerCase();
-      render(faq.filter(x => x.q.toLowerCase().includes(term) || x.a.toLowerCase().includes(term)));
-    });
+    function renderFAQ(data) {
+      const container = document.getElementById('faq-container');
+      container.innerHTML = '';
+      for (const [section, items] of Object.entries(data)) {
+        const secDiv = document.createElement('div');
+        secDiv.className = 'section';
+        secDiv.innerHTML = `<h2>${section}</h2>`;
+        items.forEach(item => {
+          const el = document.createElement('details');
+          el.className = 'faq-item';
+          el.innerHTML = `<summary>${item.q}</summary><div>${item.a}</div>`;
+          secDiv.appendChild(el);
+        });
+        container.appendChild(secDiv);
+      }
+    }
+
+    function searchFAQ(term) {
+      term = term.toLowerCase();
+      if (!term) { renderFAQ(faqData); return; }
+      const filtered = {};
+      for (const [section, items] of Object.entries(faqData)) {
+        const hits = items.filter(i => i.q.toLowerCase().includes(term) || i.a.toLowerCase().includes(term));
+        if (hits.length) filtered[section] = hits;
+      }
+      renderFAQ(filtered);
+    }
+
+    document.getElementById('search').addEventListener('input', e => searchFAQ(e.target.value));
+    renderFAQ(faqData);
   </script>
 </body>
 </html>
+
