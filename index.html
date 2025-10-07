@@ -60,7 +60,7 @@
         items.forEach(item => {
           const el = document.createElement('details');
           el.className = 'faq-item';
-          el.innerHTML = `<summary>${item.q}</summary><div>${item.a}</div>`;
+          el.innerHTML = `<summary>${item.q}</summary><div>${item.a.replace(/\n/g, '<br>')}</div>`;
           secDiv.appendChild(el);
         });
         container.appendChild(secDiv);
