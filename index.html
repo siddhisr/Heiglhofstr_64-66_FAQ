@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>FAQ</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 40px auto; line-height: 1.6; }
+    .q { background: #f8f8f8; border-radius: 8px; padding: 12px; margin: 10px 0; }
+    input { width: 100%; padding: 8px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <h1>Frequently Asked Questions</h1>
+  <input id="search" placeholder="Search..." />
+  <div id="faq"></div>
+  <hr />
+  <h2>Submit a question</h2>
+  <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfjw4Cqqnu7wuLPSYZcjieyqE-dRdIOTKtVkbL3D7wRrEtmqA/viewform?usp=header" target="_blank">Click here to suggest a question</a></p>
+
+  <script>
+    const faq = [
+      {q: "How do I reset my password?", a: "Click 'Forgot password' on the login page."},
+      {q: "How can I contact support?", a: "Email support@example.com."}
+    ];
+
+    const faqDiv = document.getElementById('faq');
+    const render = (data) => {
+      faqDiv.innerHTML = data.map(x => `<div class="q"><b>${x.q}</b><br>${x.a}</div>`).join('');
+    };
+    render(faq);
+
+    document.getElementById('search').addEventListener('input', e => {
+      const term = e.target.value.toLowerCase();
+      render(faq.filter(x => x.q.toLowerCase().includes(term) || x.a.toLowerCase().includes(term)));
+    });
+  </script>
+</body>
+</html>
